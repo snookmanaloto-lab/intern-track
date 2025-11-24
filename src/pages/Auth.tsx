@@ -118,7 +118,7 @@ const Auth = () => {
             </div>
           </div>
           <CardTitle className="text-3xl">Intern Attendance</CardTitle>
-          <CardDescription>Track attendance with ease</CardDescription>
+          {/* <CardDescription>Track attendance with ease</CardDescription> */}
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
@@ -135,7 +135,7 @@ const Auth = () => {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="intern@company.com"
+                    placeholder="intern@gmail.com"
                     required
                     disabled={isLoading}
                   />
@@ -187,7 +187,7 @@ const Auth = () => {
                     id="signup-email"
                     name="signup-email"
                     type="email"
-                    placeholder="intern@company.com"
+                    placeholder="intern@gmail.com"
                     required
                     disabled={isLoading}
                   />
