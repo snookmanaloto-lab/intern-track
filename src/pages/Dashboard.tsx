@@ -6,9 +6,30 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut, Clock, CheckCircle, XCircle, Calendar } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isWithinInterval, setHours, setMinutes, isToday } from 'date-fns';
 import AttendanceHistory from '@/components/AttendanceHistory';
 import AdminDashboard from '@/components/AdminDashboard';
+
+// Time windows in 24-hour format
+const CHECK_IN_WINDOW = {
+  start: { hour: 7, minute: 0 },  // 7:00 AM
+  end: { hour: 10, minute: 0 }    // 10:00 AM
+};
+
+const CHECK_OUT_WINDOW = {
+  start: { hour: 15, minute: 0 }, // 3:00 PM
+  end: { hour: 18, minute: 0 }    // 6:00 PM
+};
+
+const isWithinTimeWindow = (timeWindow: { start: { hour: number, minute: number }, end: { hour: number, minute: number } }) => {
+  const now = new Date();
+  if (!isToday(now)) return false;
+  
+  const start = setMinutes(setHours(now, timeWindow.start.hour), timeWindow.start.minute);
+  const end = setMinutes(setHours(now, timeWindow.end.hour), timeWindow.end.minute);
+  
+  return isWithinInterval(now, { start, end });
+};
 
 interface AttendanceRecord {
   id: string;
@@ -197,13 +218,28 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {!todayAttendance ? (
-                  <div className="text-center py-8">
-                    <XCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-4">You haven't checked in yet today</p>
-                    <Button onClick={handleCheckIn} size="lg" className="gap-2">
-                      <CheckCircle className="w-5 h-5" />
-                      Check In Now
-                    </Button>
+                  <div className="text-center py-8 space-y-4">
+                    <XCircle className="w-12 h-12 text-muted-foreground mx-auto" />
+                    <p className="text-muted-foreground">You haven't checked in yet today</p>
+                    {isWithinTimeWindow(CHECK_IN_WINDOW) ? (
+                      <Button 
+                        onClick={handleCheckIn} 
+                        size="lg" 
+                        className="gap-2 mt-4"
+                      >
+                        <CheckCircle className="w-5 h-5" />
+                        Check In Now
+                      </Button>
+                    ) : (
+                      <div className="mt-4 p-4 bg-muted/20 rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          Check-in is only available between 7:00 AM - 10:00 AM
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Current time: {format(new Date(), 'h:mm a')}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -227,11 +263,24 @@ const Dashboard = () => {
                         </div>
                         <CheckCircle className="w-8 h-8 text-primary" />
                       </div>
-                    ) : (
-                      <Button onClick={handleCheckOut} size="lg" className="w-full gap-2">
-                        <CheckCircle className="w-5 h-5" />
-                        Check Out
+                    ) : isWithinTimeWindow(CHECK_OUT_WINDOW) ? (
+                      <Button 
+                        onClick={handleCheckOut} 
+                        variant="outline" 
+                        className="w-full py-6 text-lg gap-2"
+                      >
+                        <LogOut className="w-5 h-5" />
+                        Check Out Now
                       </Button>
+                    ) : (
+                      <div className="p-4 bg-muted/20 rounded-lg border">
+                        <p className="text-sm text-muted-foreground">
+                          Check-out is only available between 3:00 PM - 6:00 PM
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Current time: {format(new Date(), 'h:mm a')}
+                        </p>
+                      </div>
                     )}
                   </div>
                 )}
