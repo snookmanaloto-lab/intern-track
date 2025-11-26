@@ -432,12 +432,19 @@ const AdminDashboard = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="space-y-6 max-w-7xl mx-auto">
-        <div>
-          <h2 className="text-3xl font-bold mb-2">Admin Dashboard</h2>
-          <p className="text-muted-foreground">Overview of all intern attendance and users</p>
+    <div className="flex flex-col h-screen">
+      {/* Fixed Header */}
+      <div className="border-b bg-card/95 backdrop-blur-sm sticky top-0 z-50 w-full">
+        <div className="container mx-auto px-4 py-3">
+          <h2 className="text-xl font-bold">Admin Dashboard</h2>
+          <p className="text-sm text-muted-foreground">Overview of all intern attendance and users</p>
         </div>
+      </div>
+
+      {/* Scrollable Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-4 py-6">
+          <div className="space-y-6 max-w-7xl mx-auto">
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30">
@@ -875,8 +882,10 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
-    </main>
-  );
+    </div>
+  </main>
+</div>
+);
 };
 
 export default AdminDashboard;
